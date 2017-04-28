@@ -1,3 +1,5 @@
+import java.util.Hashtable;
+
 
 public class Game {
    private GameButtonHandler gbh;
@@ -19,25 +21,56 @@ public class Game {
       gbh.initListenerUpdate(this, current_player);
    }
    
-   public boolean[] updateGame(int row, int col, int c_player) {
-      boolean[] win_draw = new boolean[2];
+   public Hashtable<String, Integer> updateGame(int row, int col, int c_player) {
       board_index[row][col] = c_player;
-      win_draw[0] = checkVictory(c_player);
-      win_draw[1] = checkDraw();
-      if(win_draw[0]) {
-         current_player = c_player;
+      Hashtable<String, Integer> results = new Hashtable<String, Integer>();
+      Hashtable<String, Integer> win = checkVictory(c_player);
+      if(win.get("win") != 0) {
+         results.put("win", 1);
+         if(win.get("win") == 1) {
+            results.put("win by", 1);
+            results.put("index", win.get("row_num"));
+         }
+         else if(win.get("win") == 2) {
+            results.put("win by", 2);
+            results.put("index", win.get("col_num"));
+         }
+         else if(win.get("win") == 3) {
+            results.put("win by", 3);
+            results.put("index", 0);
+         }
+         else {
+            results.put("win by", 4);
+            results.put("index", 0);
+         }
+         return results;
       }
-      else
+      else {
+         results.put("win", 0);
          current_player = c_player == 1 ? 2 : 1;
+      }
+      
+      boolean draw = checkDraw();
+      if(draw) {
+         results.put("draw", 1);
+         return results;
+      }
+      else {
+         results.put("draw", 0);
+         current_player = c_player == 1 ? 2 : 1;
+      }
+      
       gbh.ListenerUpdate(current_player);
-      return win_draw;
+      return results;
    }
    
-   private boolean checkVictory(int p) {
-      int row = 0;
-      int col = 0;
-      int ldiag = 0;
-      int rdiag = 0;
+   private Hashtable<String, Integer> checkVictory(int p) {
+      // for reference: the hashtable win key with 0 value = no win
+      Hashtable<String, Integer> data = new Hashtable<String, Integer>();
+      int row = 0; // 1 (Hashtable win key)
+      int col = 0; // 2
+      int ldiag = 0; // 3
+      int rdiag = 0; // 4
       int rdiag_int = num_row-1;
       
       for (int i = 0; i < num_row; i++) {
@@ -55,8 +88,15 @@ public class Game {
             if(i == j && board_index[i][j] == p)
                ldiag++;
          }
-         if(row == 3 || col == 3) {
-            return true;
+         if(row == 3) {
+            data.put("win", 1);
+            data.put("row_num", i);
+            return data;
+         }
+         else if (col == 3) {
+            data.put("win", 2);
+            data.put("col_num", i);
+            return data;
          }
          else {
             col = 0;
@@ -64,9 +104,16 @@ public class Game {
          }
          rdiag_int--;
       }
-      if(ldiag == 3 || rdiag == 3)
-         return true;
-      return false;
+      if(ldiag == 3) {
+         data.put("win", 3);
+         return data;
+      }
+      else if(rdiag == 3) {
+         data.put("win", 4);
+         return data;
+      }
+      data.put("win", 0);
+      return data;
    }
    
    private boolean checkDraw() {

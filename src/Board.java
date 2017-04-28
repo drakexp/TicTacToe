@@ -214,8 +214,8 @@ public class Board {
    
    public void goAgain() {
       go_again.setVisible(false);
-      status_label.setText(p1_name + "'s turn");
       status_label.setFont(new Font("Times New Roman", Font.BOLD, 18));
+      updateInfo(1);
       board_panel.removeAll();
       board_panel.revalidate();
       board_panel.repaint();
