@@ -33,13 +33,13 @@ public class GameButtonHandler implements ActionListener {
       if(!playing_flag) { // check if cpu is currently playing
          playing_flag = true;
          JButton selectedBtn = (JButton) event.getSource();
-         if(game_type == "2P" || (game_type == "AI" && ((current_player == 1 && player_turn == "First") 
+         if(game_type == "2P" || (game_type == "CPU" && ((current_player == 1 && player_turn == "First") 
                || (current_player == 2 && player_turn == "Second")))) {
             
             selectButton(selectedBtn);
             winordraw = checkWinorDraw(selectedBtn);
          }
-         if(game_type == "AI" && !winordraw) {
+         if(game_type == "CPU" && !winordraw) {
             getCPUPlay();
          }
       }
@@ -172,9 +172,9 @@ public class GameButtonHandler implements ActionListener {
                indices = game.simEasy();
             else
                indices = game.simNormal(current_player);
-            JButton aibutton = buttonArray[indices.get("row")][indices.get("col")];
-            selectButton(aibutton);
-            winordraw = checkWinorDraw(aibutton);
+            JButton CPUbutton = buttonArray[indices.get("row")][indices.get("col")];
+            selectButton(CPUbutton);
+            winordraw = checkWinorDraw(CPUbutton);
          }
       });
       timer.setRepeats(false);

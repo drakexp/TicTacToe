@@ -50,7 +50,7 @@ public class ButtonHandler implements ActionListener {
       }
       else if (button_name.equals("Easy") || button_name.equals("Normal")) {
          String[] options = new String[] {"First", "Second", "Cancel"};
-         int response = JOptionPane.showOptionDialog(null, "Would you like to go first or second?", "Versus AI",
+         int response = JOptionPane.showOptionDialog(null, "Would you like to go first or second?", "Versus CPU",
              JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
              null, options, options[0]);
          String turn = 
