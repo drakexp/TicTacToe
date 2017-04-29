@@ -43,14 +43,18 @@ public class GameButtonHandler implements ActionListener {
             getAI();
          }
       }
+      if(game_type == "2P")
+         playing_flag = false;
+      else {
       Timer timer = new Timer(500, new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent arg0) {
-            playing_flag = false;
-         }
-      });
-      timer.setRepeats(false);
-      timer.start();
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+               playing_flag = false;
+            }
+         });
+         timer.setRepeats(false);
+         timer.start();
+      }
    }
    
    public void initPVP(Game g, int c_player) {
