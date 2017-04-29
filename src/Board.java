@@ -57,7 +57,7 @@ public class Board {
    }
    
    /**
-    * Board constructor for versus AI mode
+    * Board constructor for versus CPU mode
     * @param window JFrame window
     * @param turn player's turn
     */
