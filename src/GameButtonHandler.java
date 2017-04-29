@@ -19,6 +19,7 @@ public class GameButtonHandler implements ActionListener {
    private String mode;
    private String player_turn;
    boolean winordraw = false;
+   boolean playing_flag = false;
    
    public GameButtonHandler(Board board, JButton[][] buttonArray, int num_row, int num_col, String game_type) {
       this.board = board;
@@ -29,16 +30,27 @@ public class GameButtonHandler implements ActionListener {
    }  
 
    public void actionPerformed(ActionEvent event) {
-      JButton selectedBtn = (JButton) event.getSource();
-      if(game_type == "2P" || (game_type == "AI" && ((current_player == 1 && player_turn == "First") 
-            || (current_player == 2 && player_turn == "Second")))) {
-         
-         selectButton(selectedBtn);
-         winordraw = checkWinorDraw(selectedBtn);
+      if(!playing_flag) {
+         playing_flag = true;
+         JButton selectedBtn = (JButton) event.getSource();
+         if(game_type == "2P" || (game_type == "AI" && ((current_player == 1 && player_turn == "First") 
+               || (current_player == 2 && player_turn == "Second")))) {
+            
+            selectButton(selectedBtn);
+            winordraw = checkWinorDraw(selectedBtn);
+         }
+         if(game_type == "AI" && !winordraw) {
+            getAI();
+         }
       }
-      if(game_type == "AI" && !winordraw) {
-         getAI();
-      }
+      Timer timer = new Timer(500, new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            playing_flag = false;
+         }
+      });
+      timer.setRepeats(false);
+      timer.start();
    }
    
    public void initPVP(Game g, int c_player) {
@@ -52,7 +64,16 @@ public class GameButtonHandler implements ActionListener {
       this.mode = mode;
       this.player_turn = player_turn;
       if(player_turn == "Second") {
+         playing_flag = true;
          getAI();
+         Timer timer = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+               playing_flag = false;
+            }
+         });
+         timer.setRepeats(false);
+         timer.start();
       }
    }
    
