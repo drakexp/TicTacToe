@@ -20,8 +20,8 @@ public class Game {
       initPVPGame();
    }
    
-   public void playAI(String mode, String turn) {
-      initAIGame(mode, turn);
+   public void playCPU(String mode, String turn) {
+      initCPUGame(mode, turn);
    }
    
    private void initPVPGame() {
@@ -29,17 +29,19 @@ public class Game {
       gbh.initPVP(this, current_player);
    }
    
-   private void initAIGame(String mode, String turn) {
+   private void initCPUGame(String mode, String turn) {
       current_player = 1;
-      gbh.initAI(this, current_player, mode, turn);
+      gbh.initCPU(this, current_player, mode, turn);
    }
    
+   // CPU simulate easy mode
    public Hashtable<String, Integer> simEasy() {
       Hashtable<String, Integer> results = new Hashtable<String, Integer>();
       results = getRandomIndices();
       return results;
    }
    
+   // CPU simulate normal mode
    public Hashtable<String, Integer> simNormal(int c_player) {
       int opposing_player = c_player == 1 ? 2 : 1;
       Hashtable<String, Integer> results = new Hashtable<String, Integer>();
@@ -58,9 +60,26 @@ public class Game {
       return results;
    }
    
+   /**
+    * update game information per move and check if there is a win or a draw
+    * @param row row button chosen
+    * @param col column button chosen
+    * @param c_player current player
+    * @return Hashtable results with String keys and Integer values 
+    * win == 0 // no win
+    * win == 1 // win
+    * win by == 1 // row win
+    * win by == 2 // column win
+    * win by == 3 // left diagonal win
+    * win by == 4 // right diagonal win
+    * draw == 0 // no draw
+    * draw == 1 // draw
+    * index == n // if row win or column win where n is the index of the winning row or column
+    */
    public Hashtable<String, Integer> updateGame(int row, int col, int c_player) {
       board_index[row][col] = c_player;
       Hashtable<String, Integer> results = new Hashtable<String, Integer>();
+      
       Hashtable<String, Integer> win = checkVictory(c_player);
       if(win.get("win") != 0) {
          results.put("win", 1);
@@ -101,6 +120,11 @@ public class Game {
       return results;
    }
    
+   /**
+    * check board to see if current player is victorious
+    * @param cp current player
+    * @return Hashtable with winning information
+    */
    private Hashtable<String, Integer> checkVictory(int cp) {
       // for reference: the hashtable win key with 0 value = no win
       Hashtable<String, Integer> data = new Hashtable<String, Integer>();
@@ -153,22 +177,27 @@ public class Game {
       return data;
    }
    
+   // check if game is drawn
    private boolean checkDraw() {
       for (int i = 0; i < num_row; i++) {
          for (int j = 0; j < num_col; j++) {
-            if(board_index[i][j] == 0)
+            if(board_index[i][j] == 0) // there exists an empty tile so not drawn
                return false;
          }
       }
       return true;
    }
    
+   /**
+    * called during CPU play to randomize an tile row and column index
+    * @return row and column indices in a Hashtable
+    */
    private Hashtable<String, Integer> getRandomIndices() {
       Hashtable<String, Integer> results = new Hashtable<String, Integer>();
       int board_element = -1;
       int row = 0;
       int col = 0;
-      while(board_element != 0) {
+      while(board_element != 0) { // while board element is not empty 
          row = rand.nextInt(num_row);
          col = rand.nextInt(num_col);
          board_element = board_index[row][col];
@@ -178,6 +207,12 @@ public class Game {
       return results;
    }
    
+   /**
+    * Called by CPU during normal mode where function checks if either he has a winning tile or opponent has one next move
+    * @param first player # to check against
+    * @param second player # to check
+    * @return
+    */
    private Hashtable<String, Integer> checkOneMoveWin(int first, int second) {
       Hashtable<String, Integer> results = new Hashtable<String, Integer>();
       results.put("row", -1);

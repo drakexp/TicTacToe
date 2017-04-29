@@ -1,4 +1,8 @@
-
+/**
+ * Simple Tic Tac Toe program
+ * @author David Kim
+ *
+ */
 public class TicTacToe {
    public static Menu menu;
    
