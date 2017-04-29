@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 public class Board {
    private String game_type;
    private String turn;
+   private String mode;
    
    private String p1_name;
    private String p2_name;
@@ -60,9 +61,10 @@ public class Board {
     * @param window
     * @param turn
     */
-   public Board(JFrame window, String turn, ButtonHandler bh) {
+   public Board(JFrame window, ButtonHandler bh, String turn, String mode) {
       game_type = "AI";
       this.turn = turn;
+      this.mode = mode;
       this.window = window;
       this.bh = bh;
       createBoard();
@@ -78,7 +80,7 @@ public class Board {
          p2_name = "Player 2";
       }
       else {
-         if(turn == "first") {
+         if(turn == "First") {
             p1_name = "Player";
             p2_name = "Computer";
          }
@@ -158,7 +160,7 @@ public class Board {
            
       board_panel = new JPanel();
       Dimension size = new Dimension(150, 150);
-      gbh = new GameButtonHandler(this, buttonArray, num_row, num_col);
+      gbh = new GameButtonHandler(this, buttonArray, num_row, num_col, game_type);
       for(int i = 0; i < num_row; i++) {
          for (int j = 0; j < num_col; j++) {
             board_panel.add(createButton(size, buttonArray, i, j));
@@ -170,8 +172,12 @@ public class Board {
       window.add(info_panel,BorderLayout.NORTH);
       window.add(bottom_panel,BorderLayout.SOUTH);
       window.pack();
-      
-      new Game(gbh, num_row, num_col);
+
+      Game game = new Game(gbh, num_row, num_col);
+      if(game_type == "2P")
+         game.playPVP();
+      else 
+         game.playAI(mode, turn);
       
       window.setVisible(true);
    }
@@ -220,14 +226,18 @@ public class Board {
       board_panel.revalidate();
       board_panel.repaint();
       Dimension size = new Dimension(150, 150);
-      gbh = new GameButtonHandler(this, buttonArray, num_row, num_col);
+      gbh = new GameButtonHandler(this, buttonArray, num_row, num_col, game_type);
       for(int i = 0; i < num_row; i++) {
          for (int j = 0; j < num_col; j++) {
             board_panel.add(createButton(size, buttonArray, i, j));
          }
       }
       window.add(board_panel,BorderLayout.CENTER);
-      new Game(gbh, num_row, num_col);
+      Game game = new Game(gbh, num_row, num_col);
+      if(game_type == "2P")
+         game.playPVP();
+      else 
+         game.playAI(mode, turn);
    }
    
    private JButton createButton(Dimension dim, JButton[][] btnArray, int row, int col) {
