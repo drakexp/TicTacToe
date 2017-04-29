@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 public class GameButtonHandler implements ActionListener {
@@ -14,64 +15,52 @@ public class GameButtonHandler implements ActionListener {
    private JButton[][] buttonArray;
    private int current_player;
    private Game game;
+   private String game_type;
+   private String mode;
+   private String player_turn;
+   boolean winordraw = false;
    
-   public GameButtonHandler(Board board, JButton[][] buttonArray, int num_row, int num_col) {
+   public GameButtonHandler(Board board, JButton[][] buttonArray, int num_row, int num_col, String game_type) {
       this.board = board;
       this.buttonArray = buttonArray;
       this.num_row = num_row;
       this.num_col = num_col;
+      this.game_type = game_type;
    }  
 
    public void actionPerformed(ActionEvent event) {
       JButton selectedBtn = (JButton) event.getSource();
-      if (current_player == 1) {
-         selectedBtn.setText("X");
-         selectedBtn.setForeground(Color.RED);
-         UIManager.getDefaults().put("Button.disabledText",Color.RED);
-         board.updateInfo(2);
+      if(game_type == "2P" || (game_type == "AI" && ((current_player == 1 && player_turn == "First") 
+            || (current_player == 2 && player_turn == "Second")))) {
+         
+         selectButton(selectedBtn);
+         winordraw = checkWinorDraw(selectedBtn);
       }
-      else {
-         selectedBtn.setText("O");
-         selectedBtn.setForeground(Color.GREEN);
-         UIManager.getDefaults().put("Button.disabledText",Color.GREEN);
-         board.updateInfo(1);
-      }
-      selectedBtn.setFont(new Font("Arial", Font.BOLD, 130));
-      selectedBtn.setBackground(Color.LIGHT_GRAY);
-      selectedBtn.setEnabled(false);
-      for (int i = 0; i < num_row; i++) {
-         for (int j = 0; j < num_col; j++) {
-            if (buttonArray[i][j] == selectedBtn) {
-               Hashtable <String, Integer> win_draw = game.updateGame(i, j, current_player);
-               if(win_draw.get("win") == 1) { // win
-                  board.updateInfo(current_player);
-                  ListenerWinUpdate(current_player, win_draw.get("win by"), win_draw.get("index"));
-                  break;
-               }
-               else { // no wins yet
-                  if (win_draw.get("draw") == 1) { // draw
-                     board.updateInfo(current_player);
-                     board.displayDraw();
-                     break;
-                  }
-                  else
-                     break;
-               }
-            }
-         }
+      if(game_type == "AI" && !winordraw) {
+         getAI();
       }
    }
    
-   public void initListenerUpdate(Game g, int x) {
+   public void initPVP(Game g, int c_player) {
       game = g;
-      current_player = x;
+      current_player = c_player;
    }
    
-   public void ListenerUpdate(int x) {
-      current_player = x;
+   public void initAI(Game g, int c_player, String mode, String player_turn) {
+      game = g;
+      current_player = c_player;
+      this.mode = mode;
+      this.player_turn = player_turn;
+      if(player_turn == "Second") {
+         getAI();
+      }
    }
    
-   private void ListenerWinUpdate(int x, int cond, int index) {
+   public void ListenerUpdate(int c_player) {
+      current_player = c_player;
+   }
+   
+   private void ListenerWinUpdate(int c_player, int cond, int index) {
       for (int i = 0; i < num_row; i++) {
          for (int j = 0; j < num_col; j++) {
             buttonArray[i][j].setEnabled(false);
@@ -94,6 +83,67 @@ public class GameButtonHandler implements ActionListener {
             a--;
          }
       }       
-      board.displayWin(x);
+      board.displayWin(c_player);
+   }
+   
+   private void selectButton(JButton button) {
+      if (current_player == 1) {
+         button.setText("X");
+         button.setForeground(Color.RED);
+         UIManager.getDefaults().put("Button.disabledText",Color.RED);
+         board.updateInfo(2);
+      }
+      else {
+         button.setText("O");
+         button.setForeground(Color.GREEN);
+         UIManager.getDefaults().put("Button.disabledText",Color.GREEN);
+         board.updateInfo(1);
+      }
+      button.setFont(new Font("Arial", Font.BOLD, 130));
+      button.setBackground(Color.LIGHT_GRAY);
+      button.setEnabled(false);
+   }
+   
+   private boolean checkWinorDraw(JButton button) {
+      for (int i = 0; i < num_row; i++) {
+         for (int j = 0; j < num_col; j++) {
+            if (buttonArray[i][j] == button) {
+               Hashtable <String, Integer> win_draw = game.updateGame(i, j, current_player);
+               if(win_draw.get("win") == 1) { // win
+                  board.updateInfo(current_player);
+                  ListenerWinUpdate(current_player, win_draw.get("win by"), win_draw.get("index"));
+                  return true;
+               }
+               else { // no wins yet
+                  if (win_draw.get("draw") == 1) { // draw
+                     board.updateInfo(current_player);
+                     board.displayDraw();
+                     return true;
+                  }
+                  else
+                     return false;
+               }
+            }
+         }
+      }
+      return false;
+   }
+   
+   private void getAI() {
+      Timer timer = new Timer(500, new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            Hashtable <String, Integer> indices = new Hashtable <String, Integer>();
+            if(mode == "Easy")
+               indices = game.simEasy();
+            else
+               indices = game.simNormal(current_player);
+            JButton aibutton = buttonArray[indices.get("row")][indices.get("col")];
+            selectButton(aibutton);
+            winordraw = checkWinorDraw(aibutton);
+         }
+      });
+      timer.setRepeats(false);
+      timer.start();
    }
 }
