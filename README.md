@@ -1,6 +1,8 @@
 # TicTacToe
 
-This is a simple Tic Tac Toe program written in Java which includes player versus player and player versus computer with easy and normal difficulties
+This is a simple Tic Tac Toe program written in Java which includes the following:
+1. Player versus player
+2. Player versus computer with easy and normal difficulties
 
 ## Getting Started
 
