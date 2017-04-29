@@ -30,7 +30,7 @@ public class GameButtonHandler implements ActionListener {
    }  
 
    public void actionPerformed(ActionEvent event) {
-      if(!playing_flag) {
+      if(!playing_flag) { // check if cpu is currently playing
          playing_flag = true;
          JButton selectedBtn = (JButton) event.getSource();
          if(game_type == "2P" || (game_type == "AI" && ((current_player == 1 && player_turn == "First") 
@@ -40,7 +40,7 @@ public class GameButtonHandler implements ActionListener {
             winordraw = checkWinorDraw(selectedBtn);
          }
          if(game_type == "AI" && !winordraw) {
-            getAI();
+            getCPUPlay();
          }
       }
       if(game_type == "2P")
@@ -57,19 +57,21 @@ public class GameButtonHandler implements ActionListener {
       }
    }
    
+   // initialize player vs player game listener data
    public void initPVP(Game g, int c_player) {
       game = g;
       current_player = c_player;
    }
    
-   public void initAI(Game g, int c_player, String mode, String player_turn) {
+   // initialize player vs computer game listener data
+   public void initCPU(Game g, int c_player, String mode, String player_turn) {
       game = g;
       current_player = c_player;
       this.mode = mode;
       this.player_turn = player_turn;
-      if(player_turn == "Second") {
+      if(player_turn == "Second") { // player chose to go second so CPU goes first
          playing_flag = true;
-         getAI();
+         getCPUPlay();
          Timer timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -81,27 +83,31 @@ public class GameButtonHandler implements ActionListener {
       }
    }
    
+   // update listener's current player data
    public void ListenerUpdate(int c_player) {
       current_player = c_player;
    }
    
+   // win condition is met
    private void ListenerWinUpdate(int c_player, int cond, int index) {
+      // disable all game buttons
       for (int i = 0; i < num_row; i++) {
          for (int j = 0; j < num_col; j++) {
             buttonArray[i][j].setEnabled(false);
             buttonArray[i][j].setBackground(Color.LIGHT_GRAY);
          }
       }
-      if(cond == 1)
+      // highlight winning tiles
+      if(cond == 1) // row win
          for (int col = 0; col < num_col; col++)
             buttonArray[index][col].setBackground(Color.CYAN);
-      else if(cond == 2)
+      else if(cond == 2) // column win
          for (int row = 0; row < num_col; row++)
             buttonArray[row][index].setBackground(Color.CYAN);
-      else if(cond == 3) 
+      else if(cond == 3) // left diagonal win
          for (int i = 0; i < num_row; i++)
             buttonArray[i][i].setBackground(Color.CYAN);
-      else {
+      else { // right diagonal win
          int a = num_row-1;
          for (int col = 0; col < num_col; col++) {
             buttonArray[a][col].setBackground(Color.CYAN);
@@ -111,6 +117,7 @@ public class GameButtonHandler implements ActionListener {
       board.displayWin(c_player);
    }
    
+   // change selected button
    private void selectButton(JButton button) {
       if (current_player == 1) {
          button.setText("X");
@@ -129,6 +136,7 @@ public class GameButtonHandler implements ActionListener {
       button.setEnabled(false);
    }
    
+   // get win or draw info from game
    private boolean checkWinorDraw(JButton button) {
       for (int i = 0; i < num_row; i++) {
          for (int j = 0; j < num_col; j++) {
@@ -154,7 +162,8 @@ public class GameButtonHandler implements ActionListener {
       return false;
    }
    
-   private void getAI() {
+   // CPU play advancement
+   private void getCPUPlay() {
       Timer timer = new Timer(500, new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {

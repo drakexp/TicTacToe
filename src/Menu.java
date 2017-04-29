@@ -8,31 +8,25 @@ import javax.swing.border.EmptyBorder;
 
 public class Menu extends JFrame {
    private JFrame window = new JFrame("Tic-Tac-Toe");
-   private Box box;
+   private Box menubox;
    private ButtonHandler bh;
    
+   /**
+    * Called from TicTacToe.java
+    */
    public Menu() {
       window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       window.setLocation(500, 300);
-      window.setResizable(false);
-
-      box = Box.createVerticalBox();
-      box.setBorder(new EmptyBorder(30, 5, 30, 5));
-      
-      bh = new ButtonHandler(this, window);
-      
-      Dimension size = new Dimension(300, 60);
-      box.add(createButton("Two Players", size));
-      box.add(Box.createVerticalStrut(20));
-      box.add(createButton("Play against AI", size));
-      box.add(Box.createVerticalStrut(20));
-      box.add(createButton("Exit", size));
-      
-      window.add(box);
+      window.setResizable(false);     
+      window.add(createMenuBox());
       window.pack();
       window.setVisible(true);
    }
    
+   /**
+    * Called to reinitialize Menu
+    * @param window JFrame window
+    */
    public Menu(JFrame window) {
       this.window = window;
       window.getContentPane().removeAll();
@@ -40,19 +34,7 @@ public class Menu extends JFrame {
       window.repaint();
       window.setTitle("Tic-Tac-Toe");
       
-      box = Box.createVerticalBox();
-      box.setBorder(new EmptyBorder(30, 5, 30, 5));
-      
-      bh = new ButtonHandler(this, window);
-      
-      Dimension size = new Dimension(300, 60);
-      box.add(createButton("Two Players", size));
-      box.add(Box.createVerticalStrut(20));
-      box.add(createButton("Play against AI", size));
-      box.add(Box.createVerticalStrut(20));
-      box.add(createButton("Exit", size));
-      
-      window.add(box);
+      window.add(createMenuBox());
       window.pack();
       window.setVisible(true);
    }
@@ -64,5 +46,20 @@ public class Menu extends JFrame {
       button.setMaximumSize(dim);
       button.addActionListener(bh);
       return button;
+   }
+   
+   private Box createMenuBox() {
+      menubox = Box.createVerticalBox();
+      menubox.setBorder(new EmptyBorder(30, 5, 30, 5));
+      
+      bh = new ButtonHandler(this, window);
+      
+      Dimension size = new Dimension(300, 60);
+      menubox.add(createButton("Two Players", size));
+      menubox.add(Box.createVerticalStrut(20));
+      menubox.add(createButton("Play against CPU", size));
+      menubox.add(Box.createVerticalStrut(20));
+      menubox.add(createButton("Exit", size));
+      return menubox;
    }
 }

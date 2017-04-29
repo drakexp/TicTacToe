@@ -24,9 +24,11 @@ public class ButtonHandler implements ActionListener {
 
    public void actionPerformed(ActionEvent event) {
       String button_name = event.getActionCommand();
+      
       if (button_name.equals("Two Players"))
          board = new Board(window, this);
-      else if (button_name.equals("Play against AI")) {
+      else if (button_name.equals("Play against CPU")) {
+         // Create CPU difficulty option items
          window.getContentPane().removeAll();
          window.revalidate();
          window.repaint();

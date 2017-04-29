@@ -47,7 +47,7 @@ public class Board {
    
    /**
     * Board constructor for 2 Player mode
-    * @param window
+    * @param window JFrame window
     */
    public Board(JFrame window, ButtonHandler bh) {
       game_type = "2P";
@@ -58,11 +58,11 @@ public class Board {
    
    /**
     * Board constructor for versus AI mode
-    * @param window
-    * @param turn
+    * @param window JFrame window
+    * @param turn player's turn
     */
    public Board(JFrame window, ButtonHandler bh, String turn, String mode) {
-      game_type = "AI";
+      game_type = "CPU";
       this.turn = turn;
       this.mode = mode;
       this.window = window;
@@ -70,6 +70,9 @@ public class Board {
       createBoard();
    }
    
+   /**
+    * Paint board
+    */
    private void createBoard() {
       window.getContentPane().removeAll();
       window.revalidate();
@@ -92,9 +95,9 @@ public class Board {
       
       window.setTitle(p1_name + " vs " + p2_name);
       
-      bottom_panel = new JPanel();
+      // bottom panel with buttons
       back_button = new JButton("Go to menu");
-      back_button.addActionListener(bh);
+      back_button.addActionListener(bh);     
       
       go_again = new JButton("Go again");
       go_again.setVisible(false);
@@ -104,6 +107,7 @@ public class Board {
       bottom_panel.add(go_again);
       bottom_panel.add(back_button);
       
+      // top info panel
       p1_label = new JLabel(p1_name + ":");
       p1_label.setFont(new Font("Arial", Font.BOLD, 14));
       
@@ -157,7 +161,8 @@ public class Board {
       info_panel.add(score_box);
       info_panel.add(status_label);
       info_panel.setLayout(new GridLayout(3,1));
-           
+
+      // create board
       board_panel = new JPanel();
       Dimension size = new Dimension(150, 150);
       gbh = new GameButtonHandler(this, buttonArray, num_row, num_col, game_type);
@@ -177,11 +182,12 @@ public class Board {
       if(game_type == "2P")
          game.playPVP();
       else 
-         game.playAI(mode, turn);
+         game.playCPU(mode, turn);
       
       window.setVisible(true);
    }
    
+   // update info panel
    public void updateInfo(int player_now) {
       if(player_now == 1) {
          p2_indicator.setText("");
@@ -195,6 +201,7 @@ public class Board {
       }
    }
    
+   // display winner on info panel
    public void displayWin(int player_now) {
       if(player_now == 1) {
          p1_score++;
@@ -211,6 +218,7 @@ public class Board {
       go_again.setVisible(true);
    }
    
+   // display draw on info panel
    public void displayDraw() {
       status_label.setText("Draw!");
       status_label.setFont(new Font("Times New Roman", Font.BOLD, 20));
@@ -218,6 +226,7 @@ public class Board {
       go_again.setVisible(true);
    }
    
+   // go again option after game ends
    public void goAgain() {
       go_again.setVisible(false);
       status_label.setFont(new Font("Times New Roman", Font.BOLD, 18));
@@ -237,7 +246,7 @@ public class Board {
       if(game_type == "2P")
          game.playPVP();
       else 
-         game.playAI(mode, turn);
+         game.playCPU(mode, turn);
    }
    
    private JButton createButton(Dimension dim, JButton[][] btnArray, int row, int col) {
