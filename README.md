@@ -4,12 +4,12 @@ This is a simple Tic Tac Toe program written in Java which includes player versu
 
 ## Getting Started
 
-To run this program run the executable TicTacToe.jar file in the repository or compile the files in the src folder in your preferred IDE
+To run this program run the executable TicTacToe.jar file in the repository or compile the files with TicTacToe.java as main in the src folder with your preferred IDE
 
 ### Prerequisites
 
 Java SE 7+ jdk or jre
-http://www.oracle.com/technetwork/java/javase/downloads/index.html 
+http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
 
 ## Authors
 
